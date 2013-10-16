@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Serious Sam Leaders</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+		<style type="text/css">
+			body {
+				background-color: black;
+				color: white;
+				font-family: Arial;
+			}
+			table {
+				border-collapse: collapse;
+			}
+			td {
+				border: solid 1px white;
+				padding-top: 3px;
+				padding-right: 8px;
+				padding-bottom: 3px;
+				padding-left: 8px;
+			}
+			caption {
+				font-size: x-large;
+				font-weight: bold;
+			}
+			a {
+				color: white;
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			.avatar {
+				border-right: none;
+			}
+			.name {
+				border-left: none;
+				padding-left: 0;
+			}
+			.number {
+				text-align: right;
+			}
+			.fraction {
+				text-align: center;
+			}
+			.time {
+				text-align: center;	
+			}
+			.hacked {
+				color: red;
+			}
+			.public {
+				color: chartreuse;
+			}
+			.friendsonly {
+				color: skyblue;
+			}
+			.gold {
+				color: gold;
+			}
+			.silver {
+				color: silver;
+			}
+			.bronze {
+				color: peru;
+			}
+		</style>
+	</head>
+	<body>

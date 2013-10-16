@@ -1,0 +1,11 @@
+		<h4>Legend:</h4>
+		<ul>
+			<li class="hacked">Hacked</li>
+			<li class="public">Public profile</li>
+			<li class="friendsonly">Friends-only profile</li>
+			<li class="gold">Gold medal</li>
+			<li class="silver">Silver medal</li>
+			<li class="bronze">Bronze medal</li>
+		</ul>
+	</body>
+</html>

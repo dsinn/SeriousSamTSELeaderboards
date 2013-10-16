@@ -1,0 +1,32 @@
+# Entries are of the form:
+# map name : gold silver bronze
+# where times are in centiseconds
+
+# 11985 = 3:00 4:00 5:00
+Survival_BearCity : 30000 24000 18000
+# 12051 = 1:30 2:30 3:30
+Survival_SV_BendOnSand : 21000 15000 9000
+# 11986 = 1:30 2:30 3:30
+Survival_SV_DeathFromAbove : 21000 15000 9000
+# 11987 = 1:30 2:00 3:00
+Survival_SV_DeepHole : 18000 12000 9000
+# 12052 = 4:00 6:00 8:00
+Survival_SV_GreenField : 36000 30000 24000
+# 12053 = 1:30 2:30 3:30
+Survival_SV_Icelander : 21000 15000 9000
+# 11984 = 3:00 4:30 6:00
+Survival_SV_KleerBase : 36000 27000 18000
+# 12064 = 5:00 7:00 9:00
+TeamSurvival_BearCity : 54000 42000 30000
+# 12079 = 2:00 3:30 5:00
+TeamSurvival_SV_BendOnSand : 30000 21000 12000
+# 12787 = 3:00 5:00 7:00
+TeamSurvival_SV_DeathFromAbove : 42000 30000 18000
+# 12077 = 2:00 4:00 6:00
+TeamSurvival_SV_DeepHole : 36000 24000 12000
+# 12075 = 6:00 8:00 10:00
+TeamSurvival_SV_GreenField : 60000 48000 36000
+# 12078 = 2:00 4:00 6:00
+TeamSurvival_SV_Icelander : 36000 24000 12000
+# 12076 = 4:00 5:00 6:00
+TeamSurvival_SV_KleerBase : 36000 30000 24000

@@ -1,0 +1,37 @@
+KarnakDemo : Karnak Demo
+0_01_Hatshepsut : Hatshepsut
+0_02_SandCanyon : Sand Canyon
+0_03_TombOfRamses : Tomb Of Ramses
+0_04_ValleyOfTheKings :  Valley of the Kings
+0_05_MoonMountains : Moon Mountains
+0_06_Oasis : Oasis
+0_07_Dunes : Dunes
+0_08_Suburbs : Suburbs
+0_09_Sewers : Sewers
+0_10_Metropolis : Metropolis
+0_11_AlleyOfSphinxes : Alley of the Sphinxes
+0_12_Karnak : Karnak
+0_13_Luxor : Luxor
+0_14_SacredYards : Sacred Yards
+0_15_TheGreatPyramid : Great Pyramid
+1_01_Palenque : Sierra de Chiapas
+1_02_Palenque : Valley of the Jaguar
+1_03_Teotihuacan : City of Gods
+1_04_Teotihuacan : Serpent Yards
+1_05_Teotihuacan : The Pit
+2_01_Ziggurrat : Ziggurat
+2_02_Persepolis : Elephant Atrium
+2_03_Persepolis : Courtyards of Gilgamesh
+2_04_TowerOfBabylon : Tower of Babel
+3_01_GothicCastle : The Citadel
+3_02_LandOfDamned : Land of the Damned
+3_03_CorridorOfDeath : Grand Cathedral
+All : All levels
+PalenqueDemo : Palenque Demo
+BearCity : Bear City
+SV_BendOnSand : Bend on Sand
+SV_DeathFromAbove : Death from Above
+SV_DeepHole : Deep Hole
+SV_GreenField : Green Field
+SV_Icelander : Icelander
+SV_KleerBase : Kleer Base
