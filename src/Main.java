@@ -1,7 +1,7 @@
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -24,32 +24,30 @@ public class Main {
 	final public static String STATS = "stats/SSHD:SecondEncounter/leaderboards/";
 	final public static String APPENDIX = "?xml=1";
 	final public static int MAX_PLAYERS = 50;
+
 	final public static String CSS_AVATAR = "avatar";
 	final public static String CSS_FRAC = "fraction";
 	final public static String CSS_HACKED = "hacked";
 	final public static String CSS_NUMBER = "number";
 	final public static String CSS_TIME = "time";
+
 	final public static String OUTPUT_FILE = "SeriousSamLeaders.html";
 
-	final protected static String fields[] = { null, "Date", "Difficulty",
-			"Kills", "Monsters", "Secrets", "Total secrets", "Time played",
-			"Par time", "Multiplier", "Saves" };
-	final protected static String[] gametypes = { "SinglePlayer",
-			"Cooperative", "CooperativeCoinOp", "Survival", "TeamSurvival" };
+	final protected static String fields[] = { null, "Date", "Difficulty", "Kills", "Monsters", "Secrets",
+			"Total secrets", "Time played", "Par time", "Multiplier", "Saves" };
+	final protected static String[] gametypes = { "SinglePlayer", "Cooperative", "CooperativeCoinOp", "Survival",
+			"TeamSurvival" };
 	final protected static String[] medalNames = { "gold", "silver", "bronze" };
 
-	final public static SimpleDateFormat SDF = new SimpleDateFormat(
-			"EEE, MMM dd, yyyy, hh:mm aaa");
-	final public static String TZ = new SimpleDateFormat("z")
-			.format(new Date());
+	final public static SimpleDateFormat SDF = new SimpleDateFormat("EEE, MMM dd, yyyy, hh:mm aaa");
+	final public static String TZ = new SimpleDateFormat("z").format(new Date());
 	final public static Pattern LOAD_PATTERN = Pattern.compile("[^\\\\][:=]");
 
 	final public static String GAMETYPE_FILENAME = "gametypeNames.txt";
 	final public static String LEVEL_FILENAME = "levelNames.txt";
 	final public static String MEDAL_FILENAME = "medalTimes.txt";
 
-	final protected static HashMap<String, String> lbs = IndexHandler
-			.getLeaderboards();
+	final protected static HashMap<String, String> lbs = IndexHandler.getLeaderboards();
 	final protected static Properties gametypeNames = loadPropertiesFromResource(GAMETYPE_FILENAME);
 	final protected static Properties levelNames = loadPropertiesFromResource(LEVEL_FILENAME);
 	final protected static Properties medalTimes = loadPropertiesFromResource(MEDAL_FILENAME);
@@ -57,19 +55,15 @@ public class Main {
 	public static void main(String[] args) {
 		final Scanner sn = new Scanner(System.in);
 
-		System.out
-				.println("1. Generate the leaderboard table for a specific level.");
-		System.out
-				.println("2. Find rankings of one or more players for each level of a specific gametype.");
-		System.out
-				.println("3. Find rankings of players on one or more friends lists for each level of a");
+		System.out.println("1. Generate the leaderboard table for a specific level.");
+		System.out.println("2. Find rankings of one or more players for each level of a specific gametype.");
+		System.out.println("3. Find rankings of players on one or more friends lists for each level of a");
 		System.out.println("   specific gametype.");
 		System.out.print("Select: ");
 		final int mode = getNumberFromUser(sn, System.out, 2);
 
 		for (int i = 0; i < gametypes.length; i++) {
-			System.out.printf("%d. %s%n", i + 1,
-					gametypeNames.get(gametypes[i]));
+			System.out.printf("%d. %s%n", i + 1, gametypeNames.get(gametypes[i]));
 		}
 		System.out.print("Select gametype number: ");
 		final int gameId = getNumberFromUser(sn, System.out, gametypes.length) - 1;
@@ -95,12 +89,9 @@ public class Main {
 		sn.close();
 	}
 
-	private static void generateLeaderboard(Scanner sn, List<String> levelIds,
-			String gametype, int gameId) {
-
+	private static void generateLeaderboard(Scanner sn, List<String> levelIds, String gametype, int gameId) {
 		for (int i = 0; i < levelIds.size(); i++) {
-			final String levelCode = lbs.get(levelIds.get(i)).toString()
-					.substring(gametype.length() + 1);
+			final String levelCode = lbs.get(levelIds.get(i)).toString().substring(gametype.length() + 1);
 			String levelName = levelNames.getProperty(levelCode);
 			if (levelName == null) {
 				levelName = levelCode;
@@ -108,19 +99,16 @@ public class Main {
 			System.out.printf("%2d. %s%n", i + 1, levelName);
 		}
 		System.out.print("Select level ID: ");
-		String lbChoice = levelIds.get(getNumberFromUser(sn, System.out,
-				levelIds.size()) - 1);
+		String lbChoice = levelIds.get(getNumberFromUser(sn, System.out, levelIds.size()) - 1);
 
 		System.out.printf("Enter number of players (max %d): ", MAX_PLAYERS);
 		final int numLeaders = getNumberFromUser(sn, System.out, MAX_PLAYERS);
 
-		final List<Player> leaders = new LevelHandler(lbChoice, numLeaders)
-				.getLeaders();
+		final List<Player> leaders = new LevelHandler(lbChoice, numLeaders).getLeaders();
 		outputLBHtml(leaders, gametype, gameId, lbs.get(lbChoice));
 	}
 
-	private static void stalkPlayers(Scanner sn, List<String> levelIds,
-			String gametype, int gameId) {
+	private static void stalkPlayers(Scanner sn, List<String> levelIds, String gametype, int gameId) {
 		System.out.print("Enter the number of players to track: ");
 		final String[] pids = new String[getNumberFromUser(sn, System.out, 5000)];
 		System.out.println("Enter the steam IDs for...");
@@ -145,14 +133,13 @@ public class Main {
 		}
 
 		final List<StalkRow> rows = new ArrayList<StalkRow>();
-		final StalkHandler lh = new StalkHandler(profiles.keySet(), rows,
-				levelIds);
+		final StalkHandler lh = new StalkHandler(profiles.keySet(), rows, levelIds);
 		outputStalkerHtml(lh.getRows(), profiles, gameId);
 	}
 
 	/**
 	 * Converts a number of seconds to hh:mm:ss format.
-	 * 
+	 *
 	 * @param totalSeconds
 	 *            time in terms of seconds
 	 * @return a String in hh:mm:ss format
@@ -167,7 +154,7 @@ public class Main {
 
 	/**
 	 * Converts a number of centiseconds to h?:mm:ss.cc format
-	 * 
+	 *
 	 * @param totalCentis
 	 *            time in terms of centiseconds
 	 * @return a String in h?:mm:ss.cc format
@@ -180,8 +167,7 @@ public class Main {
 		seconds %= 60;
 		if (hours > 0) {
 			minutes %= 60;
-			return String.format("%d:%02d:%02d.%02d", hours, minutes, seconds,
-					centis);
+			return String.format("%d:%02d:%02d.%02d", hours, minutes, seconds, centis);
 		} else {
 			return String.format("%02d:%02d.%02d", minutes, seconds, centis);
 		}
@@ -189,24 +175,24 @@ public class Main {
 
 	/**
 	 * Returns all of the text in a file.
-	 * 
+	 *
 	 * @param path
 	 *            the path of the file
 	 * @return all of the text in a file
 	 */
 	protected static String copypaste(String path) {
 		String output = "";
-		final Scanner sn = new Scanner(ClassLoader.getSystemClassLoader()
-				.getResourceAsStream(path));
+		final Scanner sn = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(path));
 		while (sn.hasNextLine()) {
 			output += String.format("%s%n", sn.nextLine());
 		}
+		sn.close();
 		return output;
 	}
 
 	/**
 	 * Prompts the user to enter a number from 1 to limit
-	 * 
+	 *
 	 * @param sn
 	 *            most likely a Scanner on System.in
 	 * @param limit
@@ -232,7 +218,7 @@ public class Main {
 
 	/**
 	 * Outputs the given leaderboard data into a file with the specified path.
-	 * 
+	 *
 	 * @param path
 	 *            the location of the file to be created
 	 * @param players
@@ -244,8 +230,7 @@ public class Main {
 	 * @param level
 	 *            the map name
 	 */
-	public static void outputLBHtml(List<Player> players, String gametype,
-			int gameId, String level) {
+	public static void outputLBHtml(List<Player> players, String gametype, int gameId, String level) {
 		try {
 			final File file = new File(OUTPUT_FILE);
 			final FileOutputStream fso = new FileOutputStream(file);
@@ -255,8 +240,7 @@ public class Main {
 			bw.write(copypaste("start.txt"));
 			bw.write("<table>");
 			bw.newLine();
-			bw.write("<caption>" + gametypeNames.getProperty(gametype) + ": "
-					+ getLevelName(level) + "</caption>");
+			bw.write("<caption>" + gametypeNames.getProperty(gametype) + ": " + getLevelName(level) + "</caption>");
 			bw.newLine();
 			bw.write("<tr>");
 			bw.newLine();
@@ -276,8 +260,7 @@ public class Main {
 
 			bw.write("</table>");
 			bw.newLine();
-			bw.write("<div>Table generated on " + SDF.format(new Date()) + " ("
-					+ TZ + ")</div>");
+			bw.write("<div>Table generated on " + SDF.format(new Date()) + " (" + TZ + ")</div>");
 			bw.newLine();
 			bw.write(copypaste("end.txt"));
 			bw.close();
@@ -291,7 +274,7 @@ public class Main {
 
 	/**
 	 * Outputs the given leaderboard data into a file with the specified path.
-	 * 
+	 *
 	 * @param path
 	 *            the location of the file to be created
 	 * @param rows
@@ -301,8 +284,7 @@ public class Main {
 	 * @param gameId
 	 *            the gametype ID
 	 */
-	public static void outputStalkerHtml(List<StalkRow> rows,
-			Map<String, ProfileHandler> profiles, int gameId) {
+	public static void outputStalkerHtml(List<StalkRow> rows, Map<String, ProfileHandler> profiles, int gameId) {
 		try {
 			final File file = new File(OUTPUT_FILE);
 			final FileOutputStream fso = new FileOutputStream(file);
@@ -332,8 +314,7 @@ public class Main {
 
 			bw.write("</table>");
 			bw.newLine();
-			bw.write("<td>Table generated on " + SDF.format(new Date()) + " ("
-					+ TZ + ")</td>");
+			bw.write("<td>Table generated on " + SDF.format(new Date()) + " (" + TZ + ")</td>");
 			bw.newLine();
 			bw.write(copypaste("end.txt"));
 			bw.close();
@@ -381,28 +362,22 @@ public class Main {
 		}
 	}
 
-	protected static void printStandardPlayerCells(BufferedWriter bw,
-			String level, ProfileHandler sp, Player player, int gameId) {
+	protected static void printStandardPlayerCells(BufferedWriter bw, String level, ProfileHandler sp, Player player,
+			int gameId) {
 		try {
-			bw.write(String.format("<td class=\"%s\">%s</td>", CSS_NUMBER,
-					player.rank));
+			bw.write(String.format("<td class=\"%s\">%s</td>", CSS_NUMBER, player.rank));
 			bw.newLine();
-			bw.write(String.format(
-					"<td class=\"avatar\"><img src=\"%s\" alt=\"\"></td>",
-					sp.getImgsrc()));
+			bw.write(String.format("<td class=\"avatar\"><img src=\"%s\" alt=\"\"></td>", sp.getImgsrc()));
 			bw.newLine();
 			// Profile and stats if accessible
 			bw.write("<td class=\"name\">");
 			final String profile = Main.SITE + "profiles/" + player.id;
-			bw.write(String.format("<a class=\"%s\" href=\"%s\">%s</a>",
-					sp.getPrivacystate(), profile, sp.getName()));
+			bw.write(String.format("<a class=\"%s\" href=\"%s\">%s</a>", sp.getPrivacystate(), profile, sp.getName()));
 			if (sp.getPrivacystate() != null
-					&& (sp.getPrivacystate().equalsIgnoreCase("public") || sp
-							.getPrivacystate().equalsIgnoreCase("friendsonly"))) {
-				bw.write(String.format(
-						" (<a class=\"%s\" href=\"%s\">stats</a>)",
-						sp.getPrivacystate(), profile
-								+ "/stats/SSHD:SecondEncounter"));
+					&& (sp.getPrivacystate().equalsIgnoreCase("public") || sp.getPrivacystate().equalsIgnoreCase(
+							"friendsonly"))) {
+				bw.write(String.format(" (<a class=\"%s\" href=\"%s\">stats</a>)", sp.getPrivacystate(), profile
+						+ "/stats/SSHD:SecondEncounter"));
 			}
 			bw.write("</td>");
 			bw.newLine();
@@ -412,49 +387,40 @@ public class Main {
 			if (gameId <= 2) {
 				// SP, Coop, Coin-Op
 				if (player.isHacking()) {
-					bw.write(String.format(
-							"<td class=\"%s\" style=\"%s\">%,d</td>", "hacked",
-							"text-align: right", player.score));
+					bw.write(String.format("<td class=\"%s\" style=\"%s\">%,d</td>", "hacked", "text-align: right",
+							player.score));
 				} else {
 					if (player.legitimacy != Player.LEGIT) {
-						System.out.printf(
-								"%s has unknown legitimacy code %d.%n",
-								sp.getName(), player.legitimacy);
+						System.out.printf("%s has unknown legitimacy code %d.%n", sp.getName(), player.legitimacy);
 					}
-					bw.write(String.format("<td class=\"%s\">%,d</td>",
-							CSS_NUMBER, player.score));
+					bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.score));
 				}
 				bw.newLine();
-				bw.write(String.format("<td>%s (x%d)</td>", player.difficulty,
-						player.multiplier));
+				bw.write(String.format("<td>%s (x%d)</td>", player.difficulty, player.multiplier));
 				bw.newLine();
-				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>",
-						CSS_FRAC, player.kills, player.killsPossible));
+				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.kills,
+						player.killsPossible));
 				bw.newLine();
-				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>",
-						CSS_FRAC, player.secrets, player.secretsPossible));
+				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.secrets,
+						player.secretsPossible));
 				bw.newLine();
-				bw.write(String.format("<td class=\"%s\">%s&nbsp;/ %s</td>",
-						CSS_FRAC, formatSeconds(player.seconds),
+				bw.write(String.format("<td class=\"%s\">%s&nbsp;/ %s</td>", CSS_FRAC, formatSeconds(player.seconds),
 						formatSeconds(player.parSeconds)));
 				bw.newLine();
 				if (gameId == 0) {
-					bw.write(String.format("<td class=\"%s\">%,d</td>",
-							CSS_NUMBER, player.saves));
+					bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.saves));
 					bw.newLine();
 				}
 			} else if (gameId <= 4) {
 				// Survival, Team Survival
 				final String score = formatCentis(player.score);
 				if (player.isHacking()) {
-					bw.write(String.format("<td class=\"%s %s\">%s</td>",
-							CSS_TIME, CSS_HACKED, score));
+					bw.write(String.format("<td class=\"%s %s\">%s</td>", CSS_TIME, CSS_HACKED, score));
 				} else {
 					// (Team) Survival medal times
 					final int[] par = getParTimes(level);
 					final String medal = getMedalName(par, player.score);
-					bw.write(String.format("<td class=\"%s %s\">%s</td>",
-							CSS_TIME, medal, score));
+					bw.write(String.format("<td class=\"%s %s\">%s</td>", CSS_TIME, medal, score));
 				}
 				bw.newLine();
 			}
@@ -465,38 +431,32 @@ public class Main {
 
 	/**
 	 * Should behave like java.util.Properties.load
-	 * 
+	 *
 	 * @param path
 	 *            the path of a file to be read
 	 * @return
 	 * @throws IOException
 	 *             if an error occurred when reading from the input stream
 	 */
-	protected static HashMap<String, String> getLinkedHashMapFromFiles(
-			String path) throws IOException {
+	protected static HashMap<String, String> getLinkedHashMapFromFiles(String path) throws IOException {
 		final HashMap<String, String> lhm = new LinkedHashMap<String, String>();
-		final InputStream is = ClassLoader.getSystemClassLoader()
-				.getResourceAsStream(path);
+		final InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
 		final Scanner sn = new Scanner(is);
 		int lineCount = 0;
 		while (sn.hasNextLine()) {
 			final String line = sn.nextLine().trim();
 			lineCount++;
-			if (!line.startsWith("!") && !line.startsWith("#")
-					&& line.length() > 0) {
+			if (!line.startsWith("!") && !line.startsWith("#") && line.length() > 0) {
 				if (line.startsWith(":") || line.startsWith("=")) {
 					lhm.put("", line.substring(1).trim());
 				} else {
 					final Matcher m = LOAD_PATTERN.matcher(line);
 					if (m.find()) {
-						final String key = line.substring(0, m.start() + 1)
-								.trim().replaceAll("\\\\([:=])", "$1");
-						final String value = line.substring(m.start() + 2)
-								.trim();
+						final String key = line.substring(0, m.start() + 1).trim().replaceAll("\\\\([:=])", "$1");
+						final String value = line.substring(m.start() + 2).trim();
 						lhm.put(key, value);
 					} else {
-						throw new IOException("Invalid input on line "
-								+ lineCount);
+						throw new IOException("Invalid input on line " + lineCount);
 					}
 				}
 			}
@@ -508,7 +468,7 @@ public class Main {
 	/**
 	 * Returns a Properties object from the JAR file with the specified resource
 	 * name.
-	 * 
+	 *
 	 * @param resource
 	 *            The name of the serialized Properties file.
 	 * @return a Properties object.
@@ -516,8 +476,7 @@ public class Main {
 	public static Properties loadPropertiesFromResource(String resource) {
 		final Properties ppt = new Properties();
 		try {
-			ppt.load(ClassLoader.getSystemClassLoader().getResourceAsStream(
-					resource));
+			ppt.load(ClassLoader.getSystemClassLoader().getResourceAsStream(resource));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -526,7 +485,7 @@ public class Main {
 
 	/**
 	 * Returns the final title of the level with the given ID.
-	 * 
+	 *
 	 * @param level
 	 *            the ID of the level
 	 * @return the final title of the level
