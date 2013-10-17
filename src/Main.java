@@ -126,7 +126,7 @@ public class Main {
 				System.out.printf("Could not find profile for \"%s\"%n", pid);
 			}
 		}
-		System.out.println("Looked up " + pids.length + " profiles.");
+		System.out.println("Looked up " + pids.length + " profile" + (pids.length == 1 ? "" : "s") + ".");
 		if (profiles.size() == 0) {
 			System.out.println("Failed to find any profiles. Terminating.");
 			return;
@@ -168,9 +168,8 @@ public class Main {
 		if (hours > 0) {
 			minutes %= 60;
 			return String.format("%d:%02d:%02d.%02d", hours, minutes, seconds, centis);
-		} else {
-			return String.format("%02d:%02d.%02d", minutes, seconds, centis);
 		}
+		return String.format("%02d:%02d.%02d", minutes, seconds, centis);
 	}
 
 	/**
@@ -246,6 +245,7 @@ public class Main {
 			bw.newLine();
 			printStandardHeadings(bw, gameId);
 			bw.write("</tr>");
+			bw.newLine();
 
 			for (final Player player : players) {
 				final ProfileHandler sp = new ProfileHandler(player.id);
@@ -495,11 +495,18 @@ public class Main {
 	 * @return the final title of the level
 	 */
 	public static String getLevelName(String level) {
-		final int underscore = level.indexOf('_');
-		return levelNames.getProperty(level.substring(underscore + 1));
+		final String key = level.replaceFirst("^[^_]*_", "");
+		if (levelNames.containsKey(key)) {
+			return levelNames.getProperty(key);
+		}
+		return level;
 	}
 
 	private static int[] getParTimes(String level) {
+		if (!medalTimes.containsKey(level)) {
+			return new int[] {};
+		}
+
 		final String[] par0 = medalTimes.get(level).toString().split(" ");
 		final int[] par = new int[par0.length];
 		for (int i = 0; i < par.length; i++) {
