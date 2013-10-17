@@ -33,6 +33,7 @@ public class Main {
 	final public static String CSS_TIME = "time";
 
 	final public static String OUTPUT_FILE = "SeriousSamLeaders.html";
+	final public static String ENCODING = "UTF8";
 
 	final protected static String fields[] = { null, "Date", "Difficulty", "Kills", "Monsters", "Secrets",
 			"Total secrets", "Time played", "Par time", "Multiplier", "Saves" };
@@ -202,9 +203,8 @@ public class Main {
 				final int value = Integer.parseInt(input);
 				if (0 < value && value <= limit) {
 					return value;
-				} else {
-					ps.print("Number out of range.");
 				}
+				ps.print("Number out of range.");
 			} catch (NumberFormatException nfe) {
 				ps.print("Not a number.");
 			}
@@ -229,13 +229,12 @@ public class Main {
 	public static void outputLBHtml(List<Player> players, String gametype, int gameId, String level) {
 		try {
 			final File file = new File(OUTPUT_FILE);
-			final FileOutputStream fso = new FileOutputStream(file);
-			final OutputStreamWriter osw = new OutputStreamWriter(fso, "UTF8");
-			final BufferedWriter bw = new BufferedWriter(osw);
+			final BufferedWriter bw = createBufferedWriter(file);
 
 			bw.write(copypaste("start.txt"));
 			bw.write("<table>");
-			bw.write("<caption>" + gametypeNames.getProperty(gametype) + ": " + getLevelName(level) + "</caption>");
+			bw.write(String.format("<caption>%s: %s</caption>", gametypeNames.getProperty(gametype),
+					getLevelName(level)));
 			bw.write("<tr>");
 			printStandardHeadings(bw, gameId);
 			bw.write("</tr>");
@@ -250,7 +249,7 @@ public class Main {
 			}
 
 			bw.write("</table>");
-			bw.write("<div>Table generated on " + SDF.format(new Date()) + " (" + TZ + ")</div>");
+			bw.write(String.format("<div>Table generated on %s (%s)</div>", SDF.format(new Date()), TZ));
 			bw.write(copypaste("end.txt"));
 			bw.close();
 			java.awt.Desktop.getDesktop().browse(file.toURI());
@@ -276,10 +275,7 @@ public class Main {
 	public static void outputStalkerHtml(List<StalkRow> rows, Map<String, ProfileHandler> profiles, int gameId) {
 		try {
 			final File file = new File(OUTPUT_FILE);
-			final FileOutputStream fso = new FileOutputStream(file);
-			final OutputStreamWriter osw = new OutputStreamWriter(fso, "UTF8");
-			final BufferedWriter bw = new BufferedWriter(osw);
-
+			final BufferedWriter bw = createBufferedWriter(file);
 			bw.write(copypaste("start.txt"));
 			bw.write("<table>");
 			bw.write("<tr>");
@@ -408,8 +404,9 @@ public class Main {
 			while (sn.hasNextLine()) {
 				final String line = sn.nextLine().trim();
 				lineCount++;
-				if (!line.startsWith("!") && !line.startsWith("#") && line.length() > 0) {
-					if (line.startsWith(":") || line.startsWith("=")) {
+
+				if (line.matches("[^!#].*")) {
+					if (line.matches("[:=].*")) {
 						lhm.put("", line.substring(1).trim());
 					} else {
 						final Matcher m = LOAD_PATTERN.matcher(line);
@@ -451,6 +448,12 @@ public class Main {
 		}
 
 		return ppt;
+	}
+
+	protected static BufferedWriter createBufferedWriter(File file) throws IOException {
+		final FileOutputStream fso = new FileOutputStream(file);
+		final OutputStreamWriter osw = new OutputStreamWriter(fso, ENCODING);
+		return new BufferedWriter(osw);
 	}
 
 	/**
