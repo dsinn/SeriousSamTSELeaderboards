@@ -1,9 +1,9 @@
 public class StalkRow {
-	final public String level;
+	final public String levelId;
 	final public Player player;
 
 	public StalkRow(String level, Player player) {
-		this.level = level;
+		this.levelId = level;
 		this.player = player;
 	}
 }

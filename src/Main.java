@@ -32,8 +32,6 @@ public class Main {
 	final public static String OUTPUT_FILE = "SeriousSamLeaders.html";
 	final public static String ENCODING = "UTF8";
 
-	final protected static String fields[] = { null, "Date", "Difficulty", "Kills", "Monsters", "Secrets",
-			"Total secrets", "Time played", "Par time", "Multiplier", "Saves" };
 	final protected static String[] gametypes = { "SinglePlayer", "Cooperative", "CooperativeCoinOp", "Survival",
 			"TeamSurvival" };
 	final protected static String[] medalNames = { "gold", "silver", "bronze" };
@@ -42,14 +40,9 @@ public class Main {
 	final public static String TZ = new SimpleDateFormat("z").format(new Date());
 	final public static Pattern LOAD_PATTERN = Pattern.compile("[^\\\\][:=]");
 
-	final public static String GAMETYPE_FILENAME = "gametypeNames.txt";
-	final public static String LEVEL_FILENAME = "levelNames.txt";
-	final public static String MEDAL_FILENAME = "medalTimes.txt";
-
 	final protected static HashMap<String, String> lbs = IndexHandler.getLeaderboards();
-	final protected static Properties gametypeNames = loadPropertiesFromResource(GAMETYPE_FILENAME);
-	final protected static Properties levelNames = loadPropertiesFromResource(LEVEL_FILENAME);
-	final protected static Properties medalTimes = loadPropertiesFromResource(MEDAL_FILENAME);
+	final protected static Properties levelNames = loadPropertiesFromResource("levelNames.txt");
+	final protected static Properties medalTimes = loadPropertiesFromResource("medalTimes.txt");
 
 	public static void main(String[] args) {
 		final Scanner sn = new Scanner(System.in);
@@ -60,7 +53,7 @@ public class Main {
 		final int mode = getNumberFromUser(sn, System.out, 2);
 
 		for (int i = 0; i < gametypes.length; i++) {
-			System.out.printf("%d. %s%n", i + 1, gametypeNames.get(gametypes[i]));
+			System.out.printf("%d. %s%n", i + 1, getGametypeName(gametypes[i]));
 		}
 		System.out.print("Select gametype number: ");
 		final int gameId = getNumberFromUser(sn, System.out, gametypes.length) - 1;
@@ -230,8 +223,7 @@ public class Main {
 
 			bw.write(copypaste("start.txt"));
 			bw.write("<table>");
-			bw.write(String.format("<caption>%s: %s</caption>", gametypeNames.getProperty(gametype),
-					getLevelName(level)));
+			bw.write(String.format("<caption>%s: %s</caption>", getGametypeName(gametype), getLevelName(level)));
 			bw.write("<tr>");
 			printStandardHeadings(bw, gameId);
 			bw.write("</tr>");
@@ -282,9 +274,10 @@ public class Main {
 
 			for (final StalkRow r : rows) {
 				final ProfileHandler sp = profiles.get(r.player.id);
+				final String level = lbs.get(r.levelId);
 				bw.write("<tr>");
-				bw.write("<td>" + getLevelName(lbs.get(r.level)) + "</td>");
-				printStandardPlayerCells(bw, r.level, sp, r.player, gameId);
+				bw.write("<td>" + getLevelName(level) + "</td>");
+				printStandardPlayerCells(bw, level, sp, r.player, gameId);
 				bw.write("</tr>");
 			}
 
@@ -447,5 +440,9 @@ public class Main {
 			}
 		}
 		return "";
+	}
+
+	protected static String getGametypeName(String gametype) {
+		return gametype.replaceAll("(?<=.)([A-Z])", " $1");
 	}
 }
