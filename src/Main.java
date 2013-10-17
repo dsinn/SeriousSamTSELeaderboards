@@ -1,6 +1,7 @@
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -475,11 +476,17 @@ public class Main {
 	 */
 	public static Properties loadPropertiesFromResource(String resource) {
 		final Properties ppt = new Properties();
+
 		try {
 			ppt.load(ClassLoader.getSystemClassLoader().getResourceAsStream(resource));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+		} catch (NullPointerException e) {
 		}
+		try {
+			ppt.load(new FileReader(resource));
+		} catch (IOException e) {
+		}
+
 		return ppt;
 	}
 
