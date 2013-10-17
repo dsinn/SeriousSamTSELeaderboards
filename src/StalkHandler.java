@@ -9,36 +9,31 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 public class StalkHandler extends LBHandler {
-	private String saxTemp;
-
 	final private Set<String> players;
 	final private List<StalkRow> rows;
-	private String steamid, level;
-	private int score, rank, playersFound;
+	private String levelId;
+	private int playersFound;
 
-	public StalkHandler(Set<String> players, List<StalkRow> rows,
-			List<String> levelIds) {
+	public StalkHandler(Set<String> players, List<StalkRow> rows, List<String> levelIds) {
 		this.players = players;
 		this.rows = rows;
 
-		for (final String lid : levelIds) {
-			steamid = null;
-			score = -1;
+		for (final String levelId : levelIds) {
 			playersFound = 0;
 
 			try {
 				final SAXParserFactory factory = SAXParserFactory.newInstance();
 				final SAXParser sp = factory.newSAXParser();
-				sp.parse(Main.SITE + Main.STATS + lid + Main.APPENDIX, this);
+				this.levelId = levelId;
+				sp.parse(Main.SITE + Main.STATS + levelId + Main.APPENDIX, this);
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			} catch (ParserConfigurationException pce) {
 				pce.printStackTrace();
 			} catch (SAXException se) {
-				// System.out.println(se);
 			}
-			System.out.printf("Found %d entries on %s.%n", playersFound,
-					Main.getLevelName(Main.lbs.get(lid)));
+			System.out.printf("Found %d %s on %s.%n", playersFound, playersFound == 1 ? "entry" : "entries",
+					Main.getLevelName(Main.lbs.get(levelId)));
 		}
 	}
 
@@ -47,9 +42,8 @@ public class StalkHandler extends LBHandler {
 	}
 
 	protected void addPlayer(Player p) throws SAXException {
-		if (players.contains(steamid)) {
-			rows.add(new StalkRow(level, new Player(steamid, rank, score,
-					saxTemp)));
+		if (players.contains(p.id)) {
+			rows.add(new StalkRow(levelId, p));
 			playersFound++;
 			if (playersFound == players.size()) {
 				throw new SAXException();

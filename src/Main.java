@@ -57,8 +57,6 @@ public class Main {
 
 		System.out.println("1. Generate the leaderboard table for a specific level.");
 		System.out.println("2. Find rankings of one or more players for each level of a specific gametype.");
-		System.out.println("3. Find rankings of players on one or more friends lists for each level of a");
-		System.out.println("   specific gametype.");
 		System.out.print("Select: ");
 		final int mode = getNumberFromUser(sn, System.out, 2);
 
@@ -83,8 +81,6 @@ public class Main {
 			generateLeaderboard(sn, levelIds, gametype, gameId);
 		} else if (mode == 2) {
 			stalkPlayers(sn, levelIds, gametype, gameId);
-		} else if (mode == 3) {
-
 		}
 		sn.close();
 	}
@@ -305,7 +301,7 @@ public class Main {
 				final ProfileHandler sp = profiles.get(r.player.id);
 				bw.write("<tr>");
 				bw.newLine();
-				bw.write("<td>" + getLevelName(r.level) + "</td>");
+				bw.write("<td>" + getLevelName(lbs.get(r.level)) + "</td>");
 				bw.newLine();
 				printStandardPlayerCells(bw, r.level, sp, r.player, gameId);
 				bw.write("</tr>");
