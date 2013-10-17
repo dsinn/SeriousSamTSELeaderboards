@@ -3,19 +3,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.xml.sax.SAXException;
@@ -383,47 +380,6 @@ public class Main {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-	}
-
-	/**
-	 * Should behave like java.util.Properties.load
-	 *
-	 * @param path
-	 *            the path of a file to be read
-	 * @return
-	 * @throws IOException
-	 *             if an error occurred when reading from the input stream
-	 */
-	protected static HashMap<String, String> getLinkedHashMapFromFiles(String path) throws IOException {
-		final HashMap<String, String> lhm = new LinkedHashMap<String, String>();
-		final InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
-		final Scanner sn = new Scanner(is);
-		int lineCount = 0;
-
-		try {
-			while (sn.hasNextLine()) {
-				final String line = sn.nextLine().trim();
-				lineCount++;
-
-				if (line.matches("[^!#].*")) {
-					if (line.matches("[:=].*")) {
-						lhm.put("", line.substring(1).trim());
-					} else {
-						final Matcher m = LOAD_PATTERN.matcher(line);
-						if (m.find()) {
-							final String key = line.substring(0, m.start() + 1).trim().replaceAll("\\\\([:=])", "$1");
-							final String value = line.substring(m.start() + 2).trim();
-							lhm.put(key, value);
-						} else {
-							throw new IOException("Invalid input on line " + lineCount);
-						}
-					}
-				}
-			}
-		} finally {
-			sn.close();
-		}
-		return lhm;
 	}
 
 	/**
