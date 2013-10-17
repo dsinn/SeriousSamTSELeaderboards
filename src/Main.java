@@ -443,25 +443,29 @@ public class Main {
 		final InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
 		final Scanner sn = new Scanner(is);
 		int lineCount = 0;
-		while (sn.hasNextLine()) {
-			final String line = sn.nextLine().trim();
-			lineCount++;
-			if (!line.startsWith("!") && !line.startsWith("#") && line.length() > 0) {
-				if (line.startsWith(":") || line.startsWith("=")) {
-					lhm.put("", line.substring(1).trim());
-				} else {
-					final Matcher m = LOAD_PATTERN.matcher(line);
-					if (m.find()) {
-						final String key = line.substring(0, m.start() + 1).trim().replaceAll("\\\\([:=])", "$1");
-						final String value = line.substring(m.start() + 2).trim();
-						lhm.put(key, value);
+
+		try {
+			while (sn.hasNextLine()) {
+				final String line = sn.nextLine().trim();
+				lineCount++;
+				if (!line.startsWith("!") && !line.startsWith("#") && line.length() > 0) {
+					if (line.startsWith(":") || line.startsWith("=")) {
+						lhm.put("", line.substring(1).trim());
 					} else {
-						throw new IOException("Invalid input on line " + lineCount);
+						final Matcher m = LOAD_PATTERN.matcher(line);
+						if (m.find()) {
+							final String key = line.substring(0, m.start() + 1).trim().replaceAll("\\\\([:=])", "$1");
+							final String value = line.substring(m.start() + 2).trim();
+							lhm.put(key, value);
+						} else {
+							throw new IOException("Invalid input on line " + lineCount);
+						}
 					}
 				}
 			}
+		} finally {
+			sn.close();
 		}
-		sn.close();
 		return lhm;
 	}
 
