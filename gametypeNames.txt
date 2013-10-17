@@ -1,5 +1,0 @@
-SinglePlayer : Single Player
-Cooperative : Cooperative
-CooperativeCoinOp : Coin-Op
-Survival : Survival
-TeamSurvival : Team Survival
