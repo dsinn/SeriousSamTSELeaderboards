@@ -235,30 +235,22 @@ public class Main {
 
 			bw.write(copypaste("start.txt"));
 			bw.write("<table>");
-			bw.newLine();
 			bw.write("<caption>" + gametypeNames.getProperty(gametype) + ": " + getLevelName(level) + "</caption>");
-			bw.newLine();
 			bw.write("<tr>");
-			bw.newLine();
 			printStandardHeadings(bw, gameId);
 			bw.write("</tr>");
-			bw.newLine();
 
 			for (final Player player : players) {
 				final ProfileHandler sp = new ProfileHandler(player.id);
 				System.out.print('.');
 
 				bw.write("<tr>");
-				bw.newLine();
 				printStandardPlayerCells(bw, level, sp, player, gameId);
 				bw.write("</tr>");
-				bw.newLine();
 			}
 
 			bw.write("</table>");
-			bw.newLine();
 			bw.write("<div>Table generated on " + SDF.format(new Date()) + " (" + TZ + ")</div>");
-			bw.newLine();
 			bw.write(copypaste("end.txt"));
 			bw.close();
 			java.awt.Desktop.getDesktop().browse(file.toURI());
@@ -290,29 +282,21 @@ public class Main {
 
 			bw.write(copypaste("start.txt"));
 			bw.write("<table>");
-			bw.newLine();
 			bw.write("<tr>");
-			bw.newLine();
 			bw.write("<th>Level</th>");
-			bw.newLine();
 			printStandardHeadings(bw, gameId);
 			bw.write("</tr>");
 
 			for (final StalkRow r : rows) {
 				final ProfileHandler sp = profiles.get(r.player.id);
 				bw.write("<tr>");
-				bw.newLine();
 				bw.write("<td>" + getLevelName(lbs.get(r.level)) + "</td>");
-				bw.newLine();
 				printStandardPlayerCells(bw, r.level, sp, r.player, gameId);
 				bw.write("</tr>");
-				bw.newLine();
 			}
 
 			bw.write("</table>");
-			bw.newLine();
 			bw.write("<td>Table generated on " + SDF.format(new Date()) + " (" + TZ + ")</td>");
-			bw.newLine();
 			bw.write(copypaste("end.txt"));
 			bw.close();
 			java.awt.Desktop.getDesktop().browse(file.toURI());
@@ -324,32 +308,22 @@ public class Main {
 	protected static void printStandardHeadings(BufferedWriter bw, int gameId) {
 		try {
 			bw.write("<th>Rank</th>");
-			bw.newLine();
 			bw.write("<th colspan=\"2\">Name</th>");
-			bw.newLine();
 			bw.write("<th>Time and Date (" + TZ + ")</th>");
-			bw.newLine();
 
 			if (gameId <= 2) {
 				// SP, Coop, Coin-op
 				bw.write("<th>Score</th>");
-				bw.newLine();
 				bw.write("<th>Difficulty</th>");
-				bw.newLine();
 				bw.write("<th>Kills</th>");
-				bw.newLine();
 				bw.write("<th>Secrets</th>");
-				bw.newLine();
 				bw.write("<th>Time played</th>");
-				bw.newLine();
 				if (gameId == 0) {
 					bw.write("<th>Saves</th>");
-					bw.newLine();
 				}
 			} else if (gameId <= 4) {
 				// Survival, Team Survival
 				bw.write("<th>Time</th>");
-				bw.newLine();
 			} else {
 				System.out.println("Unknown gameId " + gameId);
 				return;
@@ -363,9 +337,7 @@ public class Main {
 			int gameId) {
 		try {
 			bw.write(String.format("<td class=\"%s\">%s</td>", CSS_NUMBER, player.rank));
-			bw.newLine();
 			bw.write(String.format("<td class=\"avatar\"><img src=\"%s\" alt=\"\"></td>", sp.getImgsrc()));
-			bw.newLine();
 			// Profile and stats if accessible
 			bw.write("<td class=\"name\">");
 			final String profile = Main.SITE + "profiles/" + player.id;
@@ -377,10 +349,8 @@ public class Main {
 						+ "/stats/SSHD:SecondEncounter"));
 			}
 			bw.write("</td>");
-			bw.newLine();
 
 			bw.write("<td>" + SDF.format(player.date) + "</td>");
-			bw.newLine();
 			if (gameId <= 2) {
 				// SP, Coop, Coin-Op
 				if (player.isHacking()) {
@@ -392,21 +362,15 @@ public class Main {
 					}
 					bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.score));
 				}
-				bw.newLine();
 				bw.write(String.format("<td>%s (x%d)</td>", player.difficulty, player.multiplier));
-				bw.newLine();
 				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.kills,
 						player.killsPossible));
-				bw.newLine();
 				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.secrets,
 						player.secretsPossible));
-				bw.newLine();
 				bw.write(String.format("<td class=\"%s\">%s&nbsp;/ %s</td>", CSS_FRAC, formatSeconds(player.seconds),
 						formatSeconds(player.parSeconds)));
-				bw.newLine();
 				if (gameId == 0) {
 					bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.saves));
-					bw.newLine();
 				}
 			} else if (gameId <= 4) {
 				// Survival, Team Survival
@@ -419,7 +383,6 @@ public class Main {
 					final String medal = getMedalName(par, player.score);
 					bw.write(String.format("<td class=\"%s %s\">%s</td>", CSS_TIME, medal, score));
 				}
-				bw.newLine();
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
