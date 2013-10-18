@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.util.List;
+
 import org.xml.sax.SAXException;
 
 public class LevelHandler extends LBHandler {
@@ -20,10 +21,8 @@ public class LevelHandler extends LBHandler {
 		leaders.add(p);
 		count++;
 		if (count > limit) {
-			System.out.printf("%nParsed leaderboard XML in %d ms.%n",
-					System.currentTimeMillis() - t1);
-			throw new SAXException("Finished collecting data from " + limit
-					+ " entries.");
+			System.out.printf("%nParsed leaderboard XML in %d ms.%n", System.currentTimeMillis() - t1);
+			throw new SAXException("Finished collecting leaderboard data from " + limit + " entries.");
 		}
 	}
 }

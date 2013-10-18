@@ -1,5 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -168,13 +169,24 @@ public class Main {
 	 * @return all of the text in a file
 	 */
 	protected static String copypaste(String path) {
-		String output = "";
-		final Scanner sn = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(path));
+		final StringBuffer sb = new StringBuffer();
+
+		Scanner sn;
+		try {
+			sn = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(path));
+		} catch (NullPointerException e) {
+			try {
+				sn = new Scanner(new File(path));
+			} catch (FileNotFoundException e2) {
+				return "";
+			}
+		}
+
 		while (sn.hasNextLine()) {
-			output += String.format("%s%n", sn.nextLine());
+			sb.append(String.format("%s%n", sn.nextLine()));
 		}
 		sn.close();
-		return output;
+		return sb.toString();
 	}
 
 	/**
@@ -228,9 +240,10 @@ public class Main {
 			printStandardHeadings(bw, gameId);
 			bw.write("</tr>");
 
+			System.out.println("Collecting profile data...");
 			for (final Player player : players) {
 				final ProfileHandler sp = new ProfileHandler(player.id);
-				System.out.print('.');
+				System.out.print('-');
 
 				bw.write("<tr>");
 				printStandardPlayerCells(bw, level, sp, player, gameId);
