@@ -297,85 +297,77 @@ public class Main {
 		java.awt.Desktop.getDesktop().browse(file.toURI());
 	}
 
-	protected static void printStandardHeadings(BufferedWriter bw, int gameId) {
-		try {
-			bw.write("<th>Rank</th>");
-			bw.write("<th colspan=\"2\">Name</th>");
-			bw.write("<th>Time and Date (" + TZ + ")</th>");
+	protected static void printStandardHeadings(BufferedWriter bw, int gameId) throws IOException {
+		bw.write("<th>Rank</th>");
+		bw.write("<th colspan=\"2\">Name</th>");
+		bw.write("<th>Time and Date (" + TZ + ")</th>");
 
-			if (gameId <= 2) {
-				// SP, Coop, Coin-op
-				bw.write("<th>Score</th>");
-				bw.write("<th>Difficulty</th>");
-				bw.write("<th>Kills</th>");
-				bw.write("<th>Secrets</th>");
-				bw.write("<th>Time played</th>");
-				if (gameId == 0) {
-					bw.write("<th>Saves</th>");
-				}
-			} else if (gameId <= 4) {
-				// Survival, Team Survival
-				bw.write("<th>Time</th>");
-			} else {
-				System.out.println("Unknown gameId " + gameId);
-				return;
+		if (gameId <= 2) {
+			// SP, Coop, Coin-op
+			bw.write("<th>Score</th>");
+			bw.write("<th>Difficulty</th>");
+			bw.write("<th>Kills</th>");
+			bw.write("<th>Secrets</th>");
+			bw.write("<th>Time played</th>");
+			if (gameId == 0) {
+				bw.write("<th>Saves</th>");
 			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		} else if (gameId <= 4) {
+			// Survival, Team Survival
+			bw.write("<th>Time</th>");
+		} else {
+			System.out.println("Unknown gameId " + gameId);
+			return;
 		}
 	}
 
 	protected static void printStandardPlayerCells(BufferedWriter bw, String level, ProfileHandler sp, Player player,
-			int gameId) {
-		try {
-			bw.write(String.format("<td class=\"%s\">%s</td>", CSS_NUMBER, player.rank));
-			bw.write(String.format("<td class=\"avatar\"><img src=\"%s\" alt=\"\"></td>", sp.getImgsrc()));
-			// Profile and stats if accessible
-			bw.write("<td class=\"name\">");
-			final String profile = Main.SITE + "profiles/" + player.id;
-			bw.write(String.format("<a class=\"%s\" href=\"%s\">%s</a>", sp.getPrivacystate(), profile, sp.getName()));
-			if (sp.getPrivacystate() != null && sp.getPrivacystate().matches("public|friendsonly")) {
-				bw.write(String.format(" (<a class=\"%s\" href=\"%s\">stats</a>)", sp.getPrivacystate(), profile
-						+ "/stats/SSHD:SecondEncounter"));
-			}
-			bw.write("</td>");
+			int gameId) throws IOException {
+		bw.write(String.format("<td class=\"%s\">%s</td>", CSS_NUMBER, player.rank));
+		bw.write(String.format("<td class=\"avatar\"><img src=\"%s\" alt=\"\"></td>", sp.getImgsrc()));
+		// Profile and stats if accessible
+		bw.write("<td class=\"name\">");
+		final String profile = Main.SITE + "profiles/" + player.id;
+		bw.write(String.format("<a class=\"%s\" href=\"%s\">%s</a>", sp.getPrivacystate(), profile, sp.getName()));
+		if (sp.getPrivacystate() != null && sp.getPrivacystate().matches("public|friendsonly")) {
+			bw.write(String.format(" (<a class=\"%s\" href=\"%s\">stats</a>)", sp.getPrivacystate(), profile
+					+ "/stats/SSHD:SecondEncounter"));
+		}
+		bw.write("</td>");
 
-			bw.write("<td>" + SDF.format(player.date) + "</td>");
-			if (gameId <= 2) {
-				// SP, Coop, Coin-Op
-				if (player.isHacking()) {
-					bw.write(String.format("<td class=\"%s\" style=\"%s\">%,d</td>", "hacked", "text-align: right",
-							player.score));
-				} else {
-					if (player.legitimacy != Player.LEGIT) {
-						System.out.printf("%s has unknown legitimacy code %d.%n", sp.getName(), player.legitimacy);
-					}
-					bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.score));
+		bw.write("<td>" + SDF.format(player.date) + "</td>");
+		if (gameId <= 2) {
+			// SP, Coop, Coin-Op
+			if (player.isHacking()) {
+				bw.write(String.format("<td class=\"%s\" style=\"%s\">%,d</td>", "hacked", "text-align: right",
+						player.score));
+			} else {
+				if (player.legitimacy != Player.LEGIT) {
+					System.out.printf("%s has unknown legitimacy code %d.%n", sp.getName(), player.legitimacy);
 				}
-				bw.write(String.format("<td>%s (x%d)</td>", player.difficulty, player.multiplier));
-				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.kills,
-						player.killsPossible));
-				bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.secrets,
-						player.secretsPossible));
-				bw.write(String.format("<td class=\"%s\">%s&nbsp;/ %s</td>", CSS_FRAC, formatSeconds(player.seconds),
-						formatSeconds(player.parSeconds)));
-				if (gameId == 0) {
-					bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.saves));
-				}
-			} else if (gameId <= 4) {
-				// Survival, Team Survival
-				final String score = formatCentis(player.score);
-				if (player.isHacking()) {
-					bw.write(String.format("<td class=\"%s %s\">%s</td>", CSS_TIME, CSS_HACKED, score));
-				} else {
-					// (Team) Survival medal times
-					final int[] par = getParTimes(level);
-					final String medal = getMedalName(par, player.score);
-					bw.write(String.format("<td class=\"%s %s\">%s</td>", CSS_TIME, medal, score));
-				}
+				bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.score));
 			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			bw.write(String.format("<td>%s (x%d)</td>", player.difficulty, player.multiplier));
+			bw.write(String
+					.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.kills, player.killsPossible));
+			bw.write(String.format("<td class=\"%s\">%,d&nbsp;/ %,d</td>", CSS_FRAC, player.secrets,
+					player.secretsPossible));
+			bw.write(String.format("<td class=\"%s\">%s&nbsp;/ %s</td>", CSS_FRAC, formatSeconds(player.seconds),
+					formatSeconds(player.parSeconds)));
+			if (gameId == 0) {
+				bw.write(String.format("<td class=\"%s\">%,d</td>", CSS_NUMBER, player.saves));
+			}
+		} else if (gameId <= 4) {
+			// Survival, Team Survival
+			final String score = formatCentis(player.score);
+			if (player.isHacking()) {
+				bw.write(String.format("<td class=\"%s %s\">%s</td>", CSS_TIME, CSS_HACKED, score));
+			} else {
+				// (Team) Survival medal times
+				final int[] par = getParTimes(level);
+				final String medal = getMedalName(par, player.score);
+				bw.write(String.format("<td class=\"%s %s\">%s</td>", CSS_TIME, medal, score));
+			}
 		}
 	}
 
