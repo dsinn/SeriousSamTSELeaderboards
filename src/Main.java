@@ -45,7 +45,7 @@ public class Main {
 	final protected static Properties levelNames = loadPropertiesFromResource("levelNames.txt");
 	final protected static Properties medalTimes = loadPropertiesFromResource("medalTimes.txt");
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, SAXException {
 		final Scanner sn = new Scanner(System.in);
 
 		System.out.println("1. Generate the leaderboard table for a specific level.");
@@ -78,7 +78,8 @@ public class Main {
 		sn.close();
 	}
 
-	private static void generateLeaderboard(Scanner sn, List<String> levelIds, String gametype, int gameId) {
+	private static void generateLeaderboard(Scanner sn, List<String> levelIds, String gametype, int gameId)
+			throws IOException, SAXException {
 		for (int i = 0; i < levelIds.size(); i++) {
 			final String levelCode = lbs.get(levelIds.get(i)).toString().substring(gametype.length() + 1);
 			String levelName = levelNames.getProperty(levelCode);
@@ -97,7 +98,7 @@ public class Main {
 		outputLBHtml(leaders, gametype, gameId, lbs.get(lbChoice));
 	}
 
-	private static void stalkPlayers(Scanner sn, List<String> levelIds, String gametype, int gameId) {
+	private static void stalkPlayers(Scanner sn, List<String> levelIds, String gametype, int gameId) throws IOException {
 		System.out.print("Enter the number of players to track: ");
 		final String[] pids = new String[getNumberFromUser(sn, System.out, 5000)];
 		System.out.println("Enter the steam IDs for...");
@@ -228,38 +229,33 @@ public class Main {
 	 * @param level
 	 *            the map name
 	 */
-	public static void outputLBHtml(List<Player> players, String gametype, int gameId, String level) {
-		try {
-			final File file = new File(OUTPUT_FILE);
-			final BufferedWriter bw = createBufferedWriter(file);
+	public static void outputLBHtml(List<Player> players, String gametype, int gameId, String level)
+			throws IOException, SAXException {
+		final File file = new File(OUTPUT_FILE);
+		final BufferedWriter bw = createBufferedWriter(file);
 
-			bw.write(copypaste("start.txt"));
-			bw.write("<table>");
-			bw.write(String.format("<caption>%s: %s</caption>", getGametypeName(gametype), getLevelName(level)));
+		bw.write(copypaste("start.txt"));
+		bw.write("<table>");
+		bw.write(String.format("<caption>%s: %s</caption>", getGametypeName(gametype), getLevelName(level)));
+		bw.write("<tr>");
+		printStandardHeadings(bw, gameId);
+		bw.write("</tr>");
+
+		System.out.println("Collecting profile data...");
+		for (final Player player : players) {
+			final ProfileHandler sp = new ProfileHandler(player.id);
+			System.out.print('-');
+
 			bw.write("<tr>");
-			printStandardHeadings(bw, gameId);
+			printStandardPlayerCells(bw, level, sp, player, gameId);
 			bw.write("</tr>");
-
-			System.out.println("Collecting profile data...");
-			for (final Player player : players) {
-				final ProfileHandler sp = new ProfileHandler(player.id);
-				System.out.print('-');
-
-				bw.write("<tr>");
-				printStandardPlayerCells(bw, level, sp, player, gameId);
-				bw.write("</tr>");
-			}
-
-			bw.write("</table>");
-			bw.write(String.format("<div>Table generated on %s (%s)</div>", SDF.format(new Date()), TZ));
-			bw.write(copypaste("end.txt"));
-			bw.close();
-			java.awt.Desktop.getDesktop().browse(file.toURI());
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} catch (SAXException se) {
-			se.printStackTrace();
 		}
+
+		bw.write("</table>");
+		bw.write(String.format("<div>Table generated on %s (%s)</div>", SDF.format(new Date()), TZ));
+		bw.write(copypaste("end.txt"));
+		bw.close();
+		java.awt.Desktop.getDesktop().browse(file.toURI());
 	}
 
 	/**
@@ -274,34 +270,31 @@ public class Main {
 	 * @param gameId
 	 *            the gametype ID
 	 */
-	public static void outputStalkerHtml(List<StalkRow> rows, Map<String, ProfileHandler> profiles, int gameId) {
-		try {
-			final File file = new File(OUTPUT_FILE);
-			final BufferedWriter bw = createBufferedWriter(file);
-			bw.write(copypaste("start.txt"));
-			bw.write("<table>");
+	public static void outputStalkerHtml(List<StalkRow> rows, Map<String, ProfileHandler> profiles, int gameId)
+			throws IOException {
+		final File file = new File(OUTPUT_FILE);
+		final BufferedWriter bw = createBufferedWriter(file);
+		bw.write(copypaste("start.txt"));
+		bw.write("<table>");
+		bw.write("<tr>");
+		bw.write("<th>Level</th>");
+		printStandardHeadings(bw, gameId);
+		bw.write("</tr>");
+
+		for (final StalkRow r : rows) {
+			final ProfileHandler sp = profiles.get(r.player.id);
+			final String level = lbs.get(r.levelId);
 			bw.write("<tr>");
-			bw.write("<th>Level</th>");
-			printStandardHeadings(bw, gameId);
+			bw.write("<td>" + getLevelName(level) + "</td>");
+			printStandardPlayerCells(bw, level, sp, r.player, gameId);
 			bw.write("</tr>");
-
-			for (final StalkRow r : rows) {
-				final ProfileHandler sp = profiles.get(r.player.id);
-				final String level = lbs.get(r.levelId);
-				bw.write("<tr>");
-				bw.write("<td>" + getLevelName(level) + "</td>");
-				printStandardPlayerCells(bw, level, sp, r.player, gameId);
-				bw.write("</tr>");
-			}
-
-			bw.write("</table>");
-			bw.write("<td>Table generated on " + SDF.format(new Date()) + " (" + TZ + ")</td>");
-			bw.write(copypaste("end.txt"));
-			bw.close();
-			java.awt.Desktop.getDesktop().browse(file.toURI());
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
 		}
+
+		bw.write("</table>");
+		bw.write("<td>Table generated on " + SDF.format(new Date()) + " (" + TZ + ")</td>");
+		bw.write(copypaste("end.txt"));
+		bw.close();
+		java.awt.Desktop.getDesktop().browse(file.toURI());
 	}
 
 	protected static void printStandardHeadings(BufferedWriter bw, int gameId) {
@@ -341,9 +334,7 @@ public class Main {
 			bw.write("<td class=\"name\">");
 			final String profile = Main.SITE + "profiles/" + player.id;
 			bw.write(String.format("<a class=\"%s\" href=\"%s\">%s</a>", sp.getPrivacystate(), profile, sp.getName()));
-			if (sp.getPrivacystate() != null
-					&& (sp.getPrivacystate().equalsIgnoreCase("public") || sp.getPrivacystate().equalsIgnoreCase(
-							"friendsonly"))) {
+			if (sp.getPrivacystate() != null && sp.getPrivacystate().matches("public|friendsonly")) {
 				bw.write(String.format(" (<a class=\"%s\" href=\"%s\">stats</a>)", sp.getPrivacystate(), profile
 						+ "/stats/SSHD:SecondEncounter"));
 			}
