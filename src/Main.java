@@ -73,7 +73,7 @@ public class Main {
 		if (mode == 1) {
 			generateLeaderboard(sn, levelIds, gametype, gameId);
 		} else if (mode == 2) {
-			stalkPlayers(sn, levelIds, gametype, gameId);
+			stalkPlayers(sn, levelIds, gameId);
 		}
 		sn.close();
 	}
@@ -98,7 +98,7 @@ public class Main {
 		outputLBHtml(leaders, gametype, gameId, lbs.get(lbChoice));
 	}
 
-	private static void stalkPlayers(Scanner sn, List<String> levelIds, String gametype, int gameId) throws IOException {
+	private static void stalkPlayers(Scanner sn, List<String> levelIds, int gameId) throws IOException {
 		System.out.print("Enter the number of players to track: ");
 		final String[] pids = new String[getNumberFromUser(sn, System.out, 5000)];
 		System.out.println("Enter the steam IDs for...");

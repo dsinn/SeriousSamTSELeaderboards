@@ -17,6 +17,7 @@ public class LevelHandler extends LBHandler {
 		return leaders;
 	}
 
+	@Override
 	protected void addPlayer(Player p) throws SAXException {
 		leaders.add(p);
 		count++;

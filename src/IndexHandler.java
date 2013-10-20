@@ -26,7 +26,7 @@ public class IndexHandler extends DefaultHandler {
 			lbs = new LinkedHashMap<String, String>();
 			saxTemp = null;
 			lbid = null;
-			
+
 			final SAXParserFactory factory = SAXParserFactory.newInstance();
 			final SAXParser sp = factory.newSAXParser();
 			sp.parse(Main.SITE + Main.STATS + Main.APPENDIX, this);
@@ -39,13 +39,13 @@ public class IndexHandler extends DefaultHandler {
 		}
 	}
 
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		saxTemp = new String(ch, start, length);
 	}
 
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("lbid")) {
 			lbid = saxTemp;
 		} else if (qName.equalsIgnoreCase("name")) {

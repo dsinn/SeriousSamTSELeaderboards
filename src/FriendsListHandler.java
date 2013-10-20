@@ -10,8 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class FriendsListHandler extends DefaultHandler {
-	final public static SAXException notFound = new SAXException(
-			"Profile not found.");
+	final public static SAXException notFound = new SAXException("Profile not found.");
 	private String saxTemp;
 	private List<String> friends;
 
@@ -31,13 +30,13 @@ public class FriendsListHandler extends DefaultHandler {
 		return friends;
 	}
 
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		saxTemp = new String(ch, start, length);
 	}
 
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("friend")) {
 			friends.add(saxTemp);
 		}

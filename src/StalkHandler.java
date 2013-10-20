@@ -41,6 +41,7 @@ public class StalkHandler extends LBHandler {
 		return rows;
 	}
 
+	@Override
 	protected void addPlayer(Player p) throws SAXException {
 		if (players.contains(p.id)) {
 			rows.add(new StalkRow(levelId, p));

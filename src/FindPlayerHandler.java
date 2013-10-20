@@ -42,21 +42,20 @@ public class FindPlayerHandler extends DefaultHandler {
 		return p;
 	}
 
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		saxTemp = new String(ch, start, length);
 	}
 
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("steamid")) {
 			steamid = saxTemp;
 		} else if (qName.equalsIgnoreCase("score")) {
 			score = Integer.parseInt(saxTemp);
 		} else if (qName.equalsIgnoreCase("rank")) {
 			rank = Integer.parseInt(saxTemp);
-		} else if (qName.equalsIgnoreCase("details")
-				&& targetid.equals(steamid)) {
+		} else if (qName.equalsIgnoreCase("details") && targetid.equals(steamid)) {
 			p = new Player(steamid, rank, score, saxTemp);
 			throw new SAXException();
 		}

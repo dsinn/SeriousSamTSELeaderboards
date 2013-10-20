@@ -54,11 +54,12 @@ public class ProfileHandler extends DefaultHandler {
 		}
 	}
 
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		saxTemp = new String(ch, start, length);
 	}
 
+	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		if (qName.equalsIgnoreCase("steamID") && saxTemp.trim().length() > 0) {
